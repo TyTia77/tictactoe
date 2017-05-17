@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tic Tac Toe</title>
+    <style>
+        body{
+            font-size: 16px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .board-container{
+            position: absolute;
+            height: 400px;
+            width: 400px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            /*overflow: hidden;*/
+            /*background-color: red;*/
+        }
+
+        .boxes{
+            float: left;
+            width: calc(100% / 3);
+            height: calc(100% / 3);
+            font-size: 8em;
+            text-align: center;
+            line-height: 1;
+            color: red;
+            /*background-color: green;*/
+        }
+
+        .board-container span{
+            position: absolute;
+            height: 100%;
+            width: 3px;
+            background-color: black;
+        }
+
+        .board-container span:nth-last-of-type(1){
+            left: calc(33.3% - 3px);
+        }
+        .board-container span:nth-last-of-type(2){
+            left: calc(66.6% - 3px);
+        }
+        .board-container span:nth-last-of-type(3){
+            transform: rotate(90deg);
+            transform-origin: 0 0;
+            top: calc(33.3% - 3px);
+        }
+        .board-container span:nth-last-of-type(4){
+            transform: rotate(90deg);
+            transform-origin: 0 0;
+            top: calc(66.6% - 3px);
+        }
+
+        .winner{
+            position: relative;
+            background-color: rgba(255,255,255,.8);
+            height: 100%;
+            width: 100%;
+            backdrop-filter: blur(2px);
+        }
+
+        .winner .text{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 5em;
+            color: red;
+            padding: 10px;
+            border-radius: 10px;
+            /*background-color: green;*/
+        }
+    </style>
+</head>
+    <body ng-app='app' ng-controller='ctrl'>
+
+
+        <div class="board-container" ng-click="handleClick($event)">
+            <div class="boxes" location='1'></div>
+            <div class="boxes" location='2'></div>
+            <div class="boxes" location='3'></div>
+            <div class="boxes" location='4'></div>
+            <div class="boxes" location='5'></div>
+            <div class="boxes" location='6'></div>
+            <div class="boxes" location='7'></div>
+            <div class="boxes" location='8'></div>
+            <div class="boxes" location='9'></div>
+
+            <span>&nbsp;</span>
+            <span>&nbsp;</span>
+            <span>&nbsp;</span>
+            <span>&nbsp;</span>
+
+            <div class="winner" ng-show="winner">
+                <div class="text">WINNER!!</div>
+            </div>
+        </div>
+
+        ​
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js">
+        </script>
+        <script>
+            var app = angular.module('app', []);
+            app.controller('ctrl', ['$scope', function($scope){
+
+                $scope.winner = false;
+
+                var winCombo = [
+                    [1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
+                    [2, 5, 8], [3, 6, 9], [1, 5, 9], [7, 5, 3]
+                ];
+
+                var player = function(name, sym){
+                    this.name = name;
+                    this.score = 0;
+                    this.moves = [];
+                    this.symbol = sym;
+                };
+
+                player.prototype.getSym = function(){
+                    return this.symbol;
+                }
+                player.prototype.setSym = function(sym){
+                    this.symbol = sym
+                }
+                player.prototype.getName = function(){
+                    return this.name;
+                }
+                player.prototype.setScore = function(){
+                    this.score++;
+                }
+                player.prototype.getScore = function(){
+                    return this.score;
+                }
+                player.prototype.setMove = function(location){
+                    this.moves.push(location);
+                }
+                player.prototype.getMove = function(){
+                    return this.moves;
+                }
+
+                var player1 = new player('player1', 'X');
+                var player2 = new player('computer', 'O');
+                $scope.player2 = new player('player2');
+                var currentPlayer = player1;
+
+                player1.setScore();
+
+                console.log(player1.getName());
+                console.log(player1.getScore());
+                console.log(player2.getName());
+                console.log($scope.player2.getName());
+
+                $scope.handleClick = function(e){
+                    var select = Number(e.target.attributes.location.value);
+                    var moves = currentPlayer.getMove();
+
+                    if (moves.indexOf(select) === -1){
+                        currentPlayer.setMove(select);
+                        e.target.innerHTML = currentPlayer.symbol;
+                        isWinner(currentPlayer.getMove());
+                    } else {
+                        console.log('move alrdy selected');
+                    }
+
+                    currentPlayer = currentPlayer === player1 ? player2 : player1;
+                }
+
+                function isWinner(currentMoves){
+
+                    var winningCombo = winCombo.find(function(x){
+                        var matches = x.reduce(function(match, value){
+                            (currentMoves.indexOf(value) !== -1) ? match++ : match;
+                            return match;
+                        }, 0);
+
+                        if (matches > 2){
+                            console.log('winner');
+                            return x;
+                        }
+                    });
+
+                    winningCombo ? $scope.winner = true : $scope.winner = false;
+                }
+
+            }]);
+        </script>
+    </body>
+</html>
