@@ -1,0 +1,65 @@
+.header{
+    /*todo*/
+    position: absolute;
+    transform: translate(50%, -150%);
+}
+
+.board-container{
+    height: 100%;
+    width: 100%;
+}
+
+.boxes{
+    float: left;
+    width: calc(100% / 3);
+    height: calc(100% / 3);
+    font-size: 8em;
+    text-align: center;
+    line-height: 1;
+    color: red;
+    /*background-color: green;*/
+}
+
+.board-container span{
+    position: absolute;
+    height: 100%;
+    width: 3px;
+    background-color: #fff;
+}
+
+.board-container span:nth-last-of-type(1){
+    left: calc(33.3% - 3px);
+}
+.board-container span:nth-last-of-type(2){
+    left: calc(66.6% - 3px);
+}
+.board-container span:nth-last-of-type(3){
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+    top: calc(33.3% - 3px);
+}
+.board-container span:nth-last-of-type(4){
+    transform: rotate(90deg);
+    transform-origin: 0 0;
+    top: calc(66.6% - 3px);
+}
+
+.winner{
+    position: relative;
+    background-color: rgba(255,255,255,.8);
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(2px);
+}
+
+.winner .text{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 5em;
+    color: red;
+    padding: 10px;
+    border-radius: 10px;
+    /*background-color: green;*/
+}
