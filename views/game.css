@@ -15,9 +15,8 @@
     height: calc(100% / 3);
     font-size: 8em;
     text-align: center;
-    line-height: 1;
+    line-height: .85;
     color: red;
-    /*background-color: green;*/
 }
 
 .board-container span{
@@ -46,20 +45,43 @@
 
 .winner{
     position: relative;
-    background-color: rgba(255,255,255,.8);
+    background-color: rgba(255,255,255,1);
+    border-radius: 5px;
     height: 100%;
     width: 100%;
-    backdrop-filter: blur(2px);
+    animation: dialog .4s ease-in forwards;
 }
 
 .winner .text{
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(-15deg);
+    transform: translate(-50%, -50%);
+    text-align: center;
     font-size: 5em;
     color: red;
     padding: 10px;
     border-radius: 10px;
-    /*background-color: green;*/
+}
+
+.dialog-button{
+    position: relative;
+    top: -60px;
+    color: black;
+    float: left;
+    background: none;
+    border: none;
+    width: 50%;
+    font-size: 2em;
+    transition-duration: .2s;
+}
+
+.dialog-button:hover{
+    transform: scale(1.5, 1.5);
+}
+
+@keyframes dialog {
+    0%{transform: scale(0, 0); opacity: 0}
+    50%{transform: scale(1.3, 1.3); opacity: 1}
+    100%{transform: scale(1,1);}
 }

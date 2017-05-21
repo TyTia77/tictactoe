@@ -42,11 +42,8 @@ app.service('boardCtrl', ['$rootScope', function($rootScope){
                 temp.push(i);
             }
         }
-
         return temp;
     }
-
-
 }]);
 
 app.controller('selectSymbolCtrl', ['$scope', 'symbolCtrl', function($scope, symbolCtrl){
@@ -77,49 +74,73 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
 
     var player1 = new player('player', symbolCtrl.player1, false);
     var player2 = new player('computer', symbolCtrl.player2, true);
-    var state = boardCtrl.getNew();
+    var state;
+    clearBoard();
 
 
-    $scope.winner = false;
 
 
     // randomise who starts first
-    var rand = Math.ceil(Math.random() * 2);
-    $scope.currentPlayer = rand === 1 ? player1 : player2;
+    function getFirstStart(){
+        var rand = Math.ceil(Math.random() * 2);
+        $scope.currentPlayer = rand === 1 ? player1 : player2;
 
-    if($scope.currentPlayer.name === 'computer'){
-        setTimeout(aiMove, 1000);
+        if($scope.currentPlayer.name === 'computer'){
+            setTimeout(aiMove, 1000);
+        }
     }
 
     $scope.handleClick = function(e){
         var select = Number(e.target.attributes.location.value);
-        var moveMade = false;
 
-        if (state.indexOf(0) >= 0 && $scope.currentPlayer.name !== 'computer'){
+        if (state.indexOf(0) >= 0 && !$scope.currentPlayer.isAi){
             state[select] = $scope.currentPlayer.symbol;
             e.target.innerHTML = $scope.currentPlayer.symbol;
-            isWinner(state, $scope.currentPlayer);
-            moveMade = true;
-        } else {
-            // todo
-            console.log('move alrdy selected');
-        }
-
-        if (moveMade){
-            $scope.currentPlayer = $scope.currentPlayer === player1 ? player2 : player1;
-
-            if($scope.currentPlayer.name === 'computer'){
-                setTimeout(aiMove, 1000);
-            }
+            switchTurns();
         }
     };
+
+    function isBoardFull(){
+        return state.indexOf(0) >= 0 ? false : true;
+    }
+
+    // next players turn switch players
+    function switchTurns(){
+        // check winner
+        var winner = isWinner(state, $scope.currentPlayer);
+
+        console.log(winner);
+
+        if (winner){
+            output(true);
+        } else if (isBoardFull()){
+            output();
+        } else {
+            $scope.currentPlayer = $scope.currentPlayer.isAi ? player1 : player2;
+
+            if ($scope.currentPlayer.name === 'computer'){
+                setTimeout(aiMove, 1000);
+            } else {
+                $scope.$digest();
+            }
+        }
+    }
+
+    // win or draw argument
+    function output(win){
+        $scope.winner = true;
+        var msg = win ? $scope.currentPlayer.name +' wins !!' : 'draw!!';
+        $scope.outputMsg = msg;
+        $scope.$digest();
+    }
+
 
     function isWinner(boardstate, player){
         var currentMoves = boardCtrl.getBoard(boardstate, player.symbol);
 
         var haveWinner = boardCtrl.winCom.find(function(x){
             var matches = x.reduce(function(match, value){
-                (currentMoves.indexOf(value) >= 0) ? match++ : match;
+                currentMoves.indexOf(value) >= 0 ? match++ : match;
                 return match;
             }, 0);
 
@@ -132,12 +153,10 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     }
 
     function aiMove(){
-
         var bestMove = minimax(state, 0, $scope.currentPlayer);
         $('.boxes[location='+bestMove +']').html($scope.currentPlayer.symbol);
         state[bestMove] = $scope.currentPlayer.symbol;
-        $scope.currentPlayer = player1;
-        $scope.$digest();
+        switchTurns();
     }
 
     function minimax(board, depth,  currentPlayer){
@@ -186,9 +205,20 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
           }
     }
 
+    $scope.clickRestart = function(){
+        window.open('#/asdf', '_self');
+    }
+    $scope.clickReplay = function(){
+        clearBoard();
+    }
+
 
     function clearBoard(){
         // todo
+        $scope.winner = false;
+        state = boardCtrl.getNew();
+        $('.boxes').html('');
+        getFirstStart();
     }
 
 }]);
