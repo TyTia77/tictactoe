@@ -13,9 +13,9 @@
     float: left;
     width: calc(100% / 3);
     height: calc(100% / 3);
-    font-size: 8em;
+    font-size: 9em;
     text-align: center;
-    line-height: .8;
+    line-height: .7;
     color: red;
 }
 
