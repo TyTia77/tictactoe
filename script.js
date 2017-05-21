@@ -49,7 +49,6 @@ app.service('boardCtrl', ['$rootScope', function($rootScope){
 app.controller('selectSymbolCtrl', ['$scope', 'symbolCtrl', function($scope, symbolCtrl){
     $('span').on('click', function(e){
         var symbol = e.target.innerHTML;
-        console.log(symbol);
         symbolCtrl.player1 = symbol;
         symbolCtrl.player2 = symbol === 'X' ? 'O' : 'X';
         window.open('#game', '_self');
@@ -76,9 +75,6 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     var player2 = new player('computer', symbolCtrl.player2, true);
     var state;
     clearBoard();
-
-
-
 
     // randomise who starts first
     function getFirstStart(){
@@ -108,8 +104,6 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     function switchTurns(){
         // check winner
         var winner = isWinner(state, $scope.currentPlayer);
-
-        console.log(winner);
 
         if (winner){
             output(true);
@@ -211,7 +205,6 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     $scope.clickReplay = function(){
         clearBoard();
     }
-
 
     function clearBoard(){
         // todo
