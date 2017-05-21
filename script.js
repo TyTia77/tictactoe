@@ -6,7 +6,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     $routeProvider
         .when('/', {
             templateUrl: 'views/select-symbol.html',
-            controller: 'selectSymbolCtrl'
+            controller: 'symbolCtrl'
         })
         .when('/game', {
             templateUrl: 'views/game.html',
@@ -17,12 +17,12 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         });
 }]);
 
-app.service('symbolCtrl', [ '$rootScope', function($rootScope){
+app.service('symbolSer', [ '$rootScope', function($rootScope){
     this.player1 = '';
     this.player2 = '';
 }]);
 
-app.service('boardCtrl', ['$rootScope', function($rootScope){
+app.service('boardSer', ['$rootScope', function($rootScope){
     this.winCom = [
         [0, 1, 2], [0, 3, 6], [0, 4, 8], [1, 4, 7], [2, 5, 8], [2, 4, 6], [3, 4, 5], [6, 7, 8]
     ];
@@ -46,17 +46,17 @@ app.service('boardCtrl', ['$rootScope', function($rootScope){
     }
 }]);
 
-app.controller('selectSymbolCtrl', ['$scope', 'symbolCtrl', function($scope, symbolCtrl){
+app.controller('symbolCtrl', ['$scope', 'symbolSer', function($scope, symbolSer){
     $('span').on('click', function(e){
         var symbol = e.target.innerHTML;
-        symbolCtrl.player1 = symbol;
-        symbolCtrl.player2 = symbol === 'X' ? 'O' : 'X';
+        symbolSer.player1 = symbol;
+        symbolSer.player2 = symbol === 'X' ? 'O' : 'X';
         window.open('#game', '_self');
     });
 }]);
 
 
-app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, symbolCtrl, boardCtrl){
+app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symbolSer, boardSer){
 
     var player = function(name, sym, ai){
         this.name = name;
@@ -71,10 +71,18 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
         return this.name;
     };
 
-    var player1 = new player('player', symbolCtrl.player1, false);
-    var player2 = new player('computer', symbolCtrl.player2, true);
+    var player1 = new player('player', symbolSer.player1, false);
+    var player2 = new player('computer', symbolSer.player2, true);
     var state;
+    checkPlayers();
     clearBoard();
+
+    // fix bug on refresh page, symbol gets erased
+    function checkPlayers(){
+        if (!player1.symbol || !player2.symbol){
+            window.open('#/asdf', '_self');
+        };
+    }
 
     // randomise who starts first
     function getFirstStart(){
@@ -89,7 +97,7 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     $scope.handleClick = function(e){
         var select = Number(e.target.attributes.location.value);
 
-        if (state.indexOf(0) >= 0 && !$scope.currentPlayer.isAi){
+        if (!state[select] && !$scope.currentPlayer.isAi){
             state[select] = $scope.currentPlayer.symbol;
             e.target.innerHTML = $scope.currentPlayer.symbol;
             switchTurns();
@@ -130,9 +138,9 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
 
 
     function isWinner(boardstate, player){
-        var currentMoves = boardCtrl.getBoard(boardstate, player.symbol);
+        var currentMoves = boardSer.getBoard(boardstate, player.symbol);
 
-        var haveWinner = boardCtrl.winCom.find(function(x){
+        var haveWinner = boardSer.winCom.find(function(x){
             var matches = x.reduce(function(match, value){
                 currentMoves.indexOf(value) >= 0 ? match++ : match;
                 return match;
@@ -158,7 +166,7 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
         var isAi = currentPlayer.isAi;
         var otherPlayer = isAi ? player1 : player2;
         var boardState = board.slice();
-        var availableMoves = boardCtrl.getBoard(boardState, 0);
+        var availableMoves = boardSer.getBoard(boardState, 0);
 
         if (isWinner(boardState, otherPlayer)){
 
@@ -209,7 +217,7 @@ app.controller('ctrl', ['$scope', 'symbolCtrl', 'boardCtrl', function($scope, sy
     function clearBoard(){
         // todo
         $scope.winner = false;
-        state = boardCtrl.getNew();
+        state = boardSer.getNew();
         $('.boxes').html('');
         getFirstStart();
     }
