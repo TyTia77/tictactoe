@@ -56,7 +56,7 @@ app.controller('symbolCtrl', ['$scope', 'symbolSer', function($scope, symbolSer)
 }]);
 
 
-app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symbolSer, boardSer){
+app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function($scope, symbolSer, boardSer, $timeout){
 
     var player = function(name, sym, ai){
         this.name = name;
@@ -99,7 +99,7 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symb
 
         if (!state[select] && !$scope.currentPlayer.isAi){
             state[select] = $scope.currentPlayer.symbol;
-            e.target.innerHTML = $scope.currentPlayer.symbol;
+            flip(select);
             switchTurns();
         }
     };
@@ -126,6 +126,17 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symb
                 $scope.$digest();
             }
         }
+    }
+
+
+    // flips the board
+    function flip(index){
+        var dom = $('.boxes[location=' +index +']');
+        dom.addClass('turn');
+        $timeout(function(){
+            dom.html($scope.currentPlayer.symbol);
+            $scope.currentPlayer.symbol === 'X' ? dom.addClass('x') : dom.addClass('o');
+        },50);
     }
 
     // win or draw argument
@@ -156,12 +167,12 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symb
 
     function aiMove(){
         var bestMove = minimax(state, 0, $scope.currentPlayer);
-        $('.boxes[location='+bestMove +']').html($scope.currentPlayer.symbol);
+        flip(bestMove);
         state[bestMove] = $scope.currentPlayer.symbol;
         switchTurns();
     }
 
-    function minimax(board, depth,  currentPlayer){
+    function minimax(board, depth, currentPlayer){
 
         var isAi = currentPlayer.isAi;
         var otherPlayer = isAi ? player1 : player2;
@@ -216,9 +227,13 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', function($scope, symb
 
     function clearBoard(){
         // todo
+        var boxes = $('.boxes');
         $scope.winner = false;
         state = boardSer.getNew();
         $('.boxes').html('');
+        $('.boxes').removeClass('turn');
+        boxes.removeClass('x');
+        boxes.removeClass('o');
         getFirstStart();
     }
 

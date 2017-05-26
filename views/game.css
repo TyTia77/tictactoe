@@ -1,7 +1,7 @@
 .header{
     /*todo*/
     position: absolute;
-    transform: translate(50%, -150%);
+    transform: translate(0, -110%);
 }
 
 .board-container{
@@ -17,9 +17,29 @@
     text-align: center;
     line-height: .8;
     padding: 0;
-    color: red;
+    color: white;
+    border: 2px solid #162924;
+    border-radius: 10px;
+    background-color: lightgrey;
+    transition-duration: .3s;
 }
 
+.boxes:hover{
+    opacity: .3;
+}
+
+.turn{
+    opacity: 1!important;
+    transform: rotateY(180deg);
+}
+
+.x{
+    background-color:#D43654;
+}
+
+.o{
+    background-color: #369AD4;
+}
 .board-container span{
     position: absolute;
     height: 100%;
@@ -47,6 +67,7 @@
 .winner{
     position: relative;
     background-color: rgba(255,255,255,1);
+    background-color: #162924;
     border-radius: 5px;
     height: 100%;
     width: 100%;
@@ -60,7 +81,7 @@
     transform: translate(-50%, -50%);
     text-align: center;
     font-size: 5em;
-    color: red;
+    color: #fff;
     padding: 10px;
     border-radius: 10px;
 }
@@ -68,7 +89,7 @@
 .dialog-button{
     position: relative;
     top: -60px;
-    color: black;
+    color: #fff;
     float: left;
     background: none;
     border: none;
