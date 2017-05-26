@@ -1,11 +1,9 @@
 <link rel="stylesheet" href="views/game.css">
 
-<div class="header" ng-hide="winner">
-    <h1 class="text-center">{{currentPlayer.name}}'s turn</h1>
+<div class="header" >
+    <h1 ng-hide="winner" class="text-center">{{currentPlayer.name}}'s turn</h1>
+    <h1 ng-show="winner" class="text-center">{{outputMsg}}</h1>
 </div>
-
-
-
 
 <div class="board-container" ng-click="handleClick($event)">
     <div class="boxes" location='0'></div>
@@ -18,13 +16,7 @@
     <div class="boxes" location='7'></div>
     <div class="boxes" location='8'></div>
 
-    <!-- <span>&nbsp;</span>
-    <span>&nbsp;</span>
-    <span>&nbsp;</span>
-    <span>&nbsp;</span> -->
-
-    <div class="winner" ng-show="winner">
-        <div class="text">{{outputMsg}}</div>
+    <div class="footer" ng-show="winner">
         <button class="dialog-button" type="button" name="button" ng-click="clickRestart()">Restart</button>
         <button class="dialog-button" type="button" name="button" ng-click="clickReplay()">Replay</button>
     </div>

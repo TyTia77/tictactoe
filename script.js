@@ -127,7 +127,6 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
         }
     }
 
-
     // flips the board
     function flip(index){
         var dom = $('.boxes[location=' +index +']');
@@ -139,16 +138,23 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
         },50);
     }
 
+    function displayWinCombo(array){
+        array.forEach(function(index){
+            var dom = $('.boxes[location=' +index +']');
+            dom.addClass('lightup');
+        })
+    }
+
     // win or draw argument
     function output(win){
         $scope.winner = true;
-        var msg = win ? $scope.currentPlayer.name +' wins !!' : 'draw!!';
+        win ? displayWinCombo(isWinner(state, $scope.currentPlayer, true)) : null;
+        var msg = win ? $scope.currentPlayer.name +' wins !!' : 'draw !!';
         $scope.outputMsg = msg;
         $scope.$digest();
     }
 
-
-    function isWinner(boardstate, player){
+    function isWinner(boardstate, player, combo){
         var currentMoves = boardSer.getBoard(boardstate, player.symbol);
 
         var haveWinner = boardSer.winCom.find(function(x){
@@ -158,11 +164,11 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
             }, 0);
 
             if (matches > 2){
-                return true;
+                return x;
             }
         });
 
-        return haveWinner ? true : false;
+        return combo ? haveWinner : haveWinner ? true : false;
     }
 
     function aiMove(){
@@ -225,14 +231,16 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
     }
 
     function clearBoard(){
-        // todo
+        
+        var rmClass = ['turn', 'x', 'o', 'lightup'];
         var boxes = $('.boxes');
         $scope.winner = false;
         state = boardSer.getNew();
-        $('.boxes').html('');
-        $('.boxes').removeClass('turn');
-        boxes.removeClass('x');
-        boxes.removeClass('o');
+        boxes.html('');
+
+        rmClass.forEach(function(cl){
+            boxes.removeClass(cl);
+        })
         getFirstStart();
     }
 
