@@ -100,7 +100,6 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
         if (!state[select] && !$scope.currentPlayer.isAi){
             state[select] = $scope.currentPlayer.symbol;
             flip(select);
-            switchTurns();
         }
     };
 
@@ -136,6 +135,7 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
         $timeout(function(){
             dom.html($scope.currentPlayer.symbol);
             $scope.currentPlayer.symbol === 'X' ? dom.addClass('x') : dom.addClass('o');
+            switchTurns();
         },50);
     }
 
@@ -169,7 +169,6 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
         var bestMove = minimax(state, 0, $scope.currentPlayer);
         flip(bestMove);
         state[bestMove] = $scope.currentPlayer.symbol;
-        switchTurns();
     }
 
     function minimax(board, depth, currentPlayer){
