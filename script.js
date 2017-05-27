@@ -226,12 +226,13 @@ app.controller('ctrl', ['$scope', 'symbolSer', 'boardSer', '$timeout', function(
     $scope.clickRestart = function(){
         window.open('#/asdf', '_self');
     }
+
     $scope.clickReplay = function(){
         clearBoard();
     }
 
     function clearBoard(){
-        
+
         var rmClass = ['turn', 'x', 'o', 'lightup'];
         var boxes = $('.boxes');
         $scope.winner = false;
